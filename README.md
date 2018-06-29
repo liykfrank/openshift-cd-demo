@@ -83,6 +83,22 @@ your own names and use the following to create the demo:
 
 ## Troubleshooting
 
+
+* If gogs starting fails with ```error: need to run with root or gogs```, Modify dc/gogs to run docker with root user.
+  ```
+  oc create serviceaccount useroot
+  oc adm policy add-scc-to-user anyuid -z useroot
+  oc patch dc/gogs --patch '{"spec":{"template":{"spec":{"serviceAccountName": "useroot"}}}}'
+  
+  ```
+* If gogs is running very slow ```lookup _avatars-sec._tcp.gmail.com on xx.xx.xx.xx: read udp 172.17.0.4:43838->192.168.1.10:53: i/o timeout```, Modify dc/gogs to disable AVATAR.
+  ```
+  [picture]
+	DISABLE_GRAVATAR = true
+	ENABLE_FEDERATED_AVATAR = false
+  
+  ```
+
 * If pipeline execution fails with ```error: no match for "jboss-eap70-openshift"```, import the jboss imagestreams in OpenShift.
   ```
   oc create -f https://raw.githubusercontent.com/jboss-openshift/application-templates/ose-v1.4.12/eap/eap70-image-stream.json -n openshift
